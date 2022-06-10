@@ -4,15 +4,16 @@ const InvariantError = require('../../exceptions/InvariantError');
 // const NotFoundError = require('../../exceptions/NotFoundError');
 
 class PabrikService {
-    constructor() {
+    constructor(aksesService) {
         this._pool = new Pool();
+        this._aksesService = aksesService;
     }
 
     async addPabrik(userId, { nama_pabrik, alamat_pabrik, kab_kota_pabrik, provinsi_pabrik, gambar_pabrik, peta_pabrik }) {
         const id = `pabrik-${nanoid(16)}`;
 
         const query = {
-            text: 'INSERT INTO pabrik VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id',
+            text: 'INSERT INTO pabrik VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id_pabrik',
             values: [id, nama_pabrik, alamat_pabrik, kab_kota_pabrik, provinsi_pabrik, gambar_pabrik, peta_pabrik],
         };
 
@@ -22,7 +23,21 @@ class PabrikService {
             throw new InvariantError('pabrik gagak ditambahkan');
         }
 
-        return result.rows[0].id;
+        try {
+            await this._aksesService.addAksesPemilik(userId, id);
+        } catch (error) {
+            const queryDelete = {
+                text: 'DELETE FROM pabrik WHERE id_pabrik = $1',
+                values: [id],
+            };
+            const resultDelete = await this._pool.query(queryDelete);
+            if (!result.rows.length) {
+                throw new InvariantError(resultDelete.error);
+            }
+            throw new InvariantError(error);
+        }
+
+        return result.rows[0].id_pabrik;
     }
 
     async getAllPabrik(userId) {
@@ -51,7 +66,10 @@ class PabrikService {
         return result.rows;
     }
 
+    // perlu otorisasi pemilik
+
     async editPabrik(userId, id_pabrik, { nama_pabrik, alamat_pabrik, kab_kota_pabrik, provinsi_pabrik, gambar_pabrik, peta_pabrik }) {
+        await this._aksesService.verifyAksesPemilikPabrik(userId, id_pabrik);
         const query = {
             text: `UPDATE pabrik SET
             nama_pabrik = $1,
@@ -68,6 +86,23 @@ class PabrikService {
 
         if (!result.rows.length) {
             throw new InvariantError('Gagal memperbarui pabrik. Silakan periksa kembali data pabrik');
+        }
+    }
+
+    // perlu otorisasi pemilik
+    async deletePabrik(userId, id_pabrik) {
+        await this._aksesService.verifyAksesPemilikPabrik(userId, id_pabrik);
+
+        await this._aksesService.deleteAllAksesPabrik(userId, id_pabrik);
+
+        const query = {
+            text: 'DELETE FROM pabrik WHERE id_pabrik = $1 RETURNING id_pabrik',
+            values: [id_pabrik],
+        };
+
+        const result = await this._pool.query(query);
+        if (!result.rows.length) {
+            throw new InvariantError('Gagal menghapus Pabrik, id tidak ditemukan');
         }
     }
 }

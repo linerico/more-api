@@ -16,6 +16,21 @@ const AuthenticationsService = require('./services/postgres/AuthenticationsServi
 const TokenManager = require('./tokenize/TokenManager');
 const AuthenticationsValidator = require('./validator/authentications');
 
+// Pabrik
+const pabrik = require('./api/pabrik');
+const PabrikService = require('./services/postgres/PabrikServices');
+const PabrikValidator = require('./validator/pabrik');
+
+// Akses
+const akses = require('./api/akses');
+const AksesService = require('./services/postgres/AksesServices');
+const AksesValidator = require('./validator/akses');
+
+// Mesin
+const mesin = require('./api/mesin');
+const MesinService = require('./services/postgres/MesinServices');
+const MesinValidator = require('./validator/mesin');
+
 // Mail
 const MailSender = require('./services/mail/MailSender');
 
@@ -26,7 +41,12 @@ const init = async () => {
     const usersService = new UsersService();
     const mailSender = new MailSender();
     const authenticationsService = new AuthenticationsService();
+    const aksesService = new AksesService(usersService);
+    const mesinService = new MesinService();
     const storageService = new StorageService(path.resolve(__dirname, 'api/users/file/images'));
+    const storageServicePabrik = new StorageService(path.resolve(__dirname, 'api/pabrik/file/images'));
+    const pabrikService = new PabrikService(aksesService);
+    const storageServiceMesin = new StorageService(path.resolve(__dirname, 'api/mesin/file/images'));
 
     const server = Hapi.server({
         port: process.env.PORT,
@@ -83,6 +103,30 @@ const init = async () => {
                 usersService,
                 tokenManager: TokenManager,
                 validator: AuthenticationsValidator,
+            },
+        },
+        {
+            plugin: pabrik,
+            options: {
+                service: pabrikService,
+                validator: PabrikValidator,
+                storageService: storageServicePabrik,
+            },
+        },
+        {
+            plugin: akses,
+            options: {
+                service: aksesService,
+                validator: AksesValidator,
+            },
+        },
+        {
+            plugin: mesin,
+            options: {
+                service: mesinService,
+                aksesService,
+                storageService: storageServiceMesin,
+                validator: MesinValidator,
             },
         },
     ]);

@@ -1,32 +1,39 @@
 const ClientError = require('../../exceptions/ClientError');
 
-class UserHandler {
-    constructor(service, validator, mailSender, storageService) {
+class MesinHandler {
+    constructor(service, aksesService, storageService, validator) {
         this._service = service;
-        this._validator = validator;
-        this._mailSender = mailSender;
+        this._aksesService = aksesService;
         this._storageService = storageService;
+        this._validator = validator;
 
-        this.postUserHandler = this.postUserHandler.bind(this);
-        this.postEmailVerifikasiHandler = this.postEmailVerifikasiHandler.bind(this);
-        this.postVerifikasiHandler = this.postVerifikasiHandler.bind(this);
-        this.getUserByIdHandler = this.getUserByIdHandler.bind(this);
-        this.putUserByIdHandler = this.putUserByIdHandler.bind(this);
-        this.putUserProfilImageHandler = this.putUserProfilImageHandler.bind(this);
+        this.postMesinHandler = this.postMesinHandler.bind(this);
+        this.getMesinHandler = this.getMesinHandler.bind(this);
+        this.getMesinByNameHandler = this.getMesinByNameHandler.bind(this);
+        this.putMesinHandler = this.putMesinHandler.bind(this);
+        this.deleteMesinHandler = this.deleteMesinHandler.bind(this);
     }
 
-    async postUserHandler(request, h) {
+    async postMesinHandler(request, h) {
         try {
-            console.log(request.payload);
-            this._validator.validateUserPayload(request.payload);
-            const { nama_pengguna, email, password, no_telepon } = request.payload;
-            const userId = await this._service.addUser({ nama_pengguna, email, password, no_telepon });
+            const { nama_mesin, tipe_mesin, merek_mesin, gambar_mesin } = request.payload;
+            this._validator.validateMesinPayload({ nama_mesin, tipe_mesin, merek_mesin });
+            this._validator.validateMesinImgHeaders(gambar_mesin.hapi.headers);
+
+            const { id: id_pabrik } = request.params;
+            const { id: credentialId } = request.auth.credentials;
+
+            await this._aksesService.verifyAksesPemilikAdminPabrik(credentialId, id_pabrik);
+            await this._service.verifyNamaMesin(id_pabrik, nama_mesin);
+
+            const filename = await this._storageService.writeFile(gambar_mesin, gambar_mesin.hapi);
+            const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/mesin/images/${filename}`;
+
+            await this._service.addMesin(id_pabrik, { nama_mesin, tipe_mesin, merek_mesin, gambar_mesin: fileLocation });
 
             const response = h.response({
                 status: 'success',
-                data: {
-                    id_pengguna: userId,
-                },
+                message: 'Mesin berhasil ditambahkan',
             });
             response.code(201);
             return response;
@@ -51,157 +58,138 @@ class UserHandler {
         }
     }
 
-    async postEmailVerifikasiHandler(request, h) {
+    async getMesinHandler(request, h) {
         try {
-            const email = request.payload;
-            const kode = await this._service.getEmailVerifikasi(email);
-
-            await this._mailSender.sendEmailVerifikasi(email.email, kode);
-
-            const response = h.response({
-                status: 'success',
-                message: 'kode verifikasi berhasil dikirim',
-                data: {
-                    kode,
-                },
-            });
-            response.code(200);
-            return response;
-        } catch (error) {
-            if (error instanceof ClientError) {
-                const response = h.response({
-                    status: 'fail',
-                    message: error.message,
-                });
-                response.code(error.statusCode);
-                return response;
-            }
-
-            // Server ERROR!
-            const response = h.response({
-                status: 'error',
-                message: 'Maaf, terjadi kegagalan pada server kami.',
-            });
-            response.code(500);
-            console.error(error);
-            return response;
-        }
-    }
-
-    async postVerifikasiHandler(request, h) {
-        try {
-            this._validator.validatorKodeVerifikasiPayload(request.payload);
-            const { email, kode } = request.payload;
-            await this._service.verifikasiPengguna(email, kode);
-            const response = h.response({
-                status: 'success',
-                message: 'Email anda telah terverifikasi',
-            });
-            response.code(200);
-            return response;
-        } catch (error) {
-            if (error instanceof ClientError) {
-                const response = h.response({
-                    status: 'fail',
-                    message: error.message,
-                });
-                response.code(error.statusCode);
-                return response;
-            }
-
-            // Server ERROR!
-            const response = h.response({
-                status: 'error',
-                message: 'Maaf, terjadi kegagalan pada server kami.',
-            });
-            response.code(500);
-            console.error(error);
-            return response;
-        }
-    }
-
-    async getUserByIdHandler(request, h) {
-        try {
-            const { id: credentialId } = request.auth.credentials;
-            const user = await this._service.getUserById(credentialId);
-            return {
-                status: 'success',
-                data: {
-                    user,
-                },
-            };
-        } catch (error) {
-            if (error instanceof ClientError) {
-                const response = h.response({
-                    status: 'fail',
-                    message: error.message,
-                });
-                response.code(error.statusCode);
-                return response;
-            }
-
-            // Server ERROR!
-            const response = h.response({
-                status: 'error',
-                message: 'Maaf, terjadi kegagalan pada server kami.',
-            });
-            response.code(500);
-            console.error(error);
-            return response;
-        }
-    }
-
-    async putUserByIdHandler(request, h) {
-        try {
-            this._validator.validatorEditUserPayload(request.payload);
-            const { id: credentialId } = request.auth.credentials;
-            const { nama_pengguna, password, no_telepon } = request.payload;
-            const userId = await this._service.editUser(credentialId, { nama_pengguna, password, no_telepon });
-            return {
-                status: 'success',
-                data: {
-                    userId,
-                },
-            };
-        } catch (error) {
-            if (error instanceof ClientError) {
-                const response = h.response({
-                    status: 'fail',
-                    message: error.message,
-                });
-                response.code(error.statusCode);
-                return response;
-            }
-
-            // Server ERROR!
-            const response = h.response({
-                status: 'error',
-                message: 'Maaf, terjadi kegagalan pada server kami.',
-            });
-            response.code(500);
-            console.error(error);
-            return response;
-        }
-    }
-
-    async putUserProfilImageHandler(request, h) {
-        try {
-            const { img } = request.payload;
-            this._validator.validatorProfilImagePayload(img.hapi.headers);
+            const { id: id_pabrik } = request.params;
             const { id: credentialId } = request.auth.credentials;
 
-            const filename = await this._storageService.writeFile(img, img.hapi);
-            const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/profil/images/${filename}`;
+            await this._aksesService.cekStatus(credentialId, id_pabrik);
 
-            await this._service.uploadProfilImg(credentialId, fileLocation);
+            const mesin = await this._service.getMesin(id_pabrik);
 
             const response = h.response({
                 status: 'success',
-                message: 'foto profil berhasil diperbarui',
                 data: {
-                    fileLocation,
+                    mesin,
                 },
             });
+            return response;
+        } catch (error) {
+            if (error instanceof ClientError) {
+                const response = h.response({
+                    status: 'fail',
+                    message: error.message,
+                });
+                response.code(error.statusCode);
+                return response;
+            }
+
+            // Server ERROR!
+            const response = h.response({
+                status: 'error',
+                message: 'Maaf, terjadi kegagalan pada server kami.',
+            });
+            response.code(500);
+            console.error(error);
+            return response;
+        }
+    }
+
+    async getMesinByNameHandler(request, h) {
+        try {
+            const { id: id_pabrik, filter } = request.params;
+            const { id: credentialId } = request.auth.credentials;
+
+            await this._aksesService.cekStatus(credentialId, id_pabrik);
+
+            const mesin = await this._service.getMesinByName(id_pabrik, filter);
+
+            const response = h.response({
+                status: 'success',
+                data: {
+                    mesin,
+                },
+            });
+            return response;
+        } catch (error) {
+            if (error instanceof ClientError) {
+                const response = h.response({
+                    status: 'fail',
+                    message: error.message,
+                });
+                response.code(error.statusCode);
+                return response;
+            }
+
+            // Server ERROR!
+            const response = h.response({
+                status: 'error',
+                message: 'Maaf, terjadi kegagalan pada server kami.',
+            });
+            response.code(500);
+            console.error(error);
+            return response;
+        }
+    }
+
+    async putMesinHandler(request, h) {
+        try {
+            const { nama_mesin, tipe_mesin, merek_mesin, gambar_mesin } = request.payload;
+            this._validator.validateMesinPayload({ nama_mesin, tipe_mesin, merek_mesin });
+            this._validator.validateMesinImgHeaders(gambar_mesin.hapi.headers);
+
+            const { id: id_pabrik, idMesin: id_mesin } = request.params;
+            const { id: credentialId } = request.auth.credentials;
+
+            await this._aksesService.verifyAksesPemilikAdminPabrik(credentialId, id_pabrik);
+            // await this._service.verifyNamaMesin(id_pabrik, nama_mesin);
+
+            const filename = await this._storageService.writeFile(gambar_mesin, gambar_mesin.hapi);
+            const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/mesin/images/${filename}`;
+
+            await this._service.editMesin(id_pabrik, id_mesin, { nama_mesin, tipe_mesin, merek_mesin, gambar_mesin: fileLocation });
+
+            const response = h.response({
+                status: 'success',
+                message: 'Mesin berhasil diperbarui',
+            });
+            response.code(201);
+            return response;
+        } catch (error) {
+            if (error instanceof ClientError) {
+                const response = h.response({
+                    status: 'fail',
+                    message: error.message,
+                });
+                response.code(error.statusCode);
+                return response;
+            }
+
+            // Server ERROR!
+            const response = h.response({
+                status: 'error',
+                message: 'Maaf, terjadi kegagalan pada server kami.',
+            });
+            response.code(500);
+            console.error(error);
+            return response;
+        }
+    }
+
+    async deleteMesinHandler(request, h) {
+        try {
+            const { id: id_pabrik, idMesin: id_mesin } = request.params;
+            const { id: credentialId } = request.auth.credentials;
+
+            await this._aksesService.verifyAksesPemilikAdminPabrik(credentialId, id_pabrik);
+
+            await this._service.deleteMesin(id_mesin);
+
+            const response = h.response({
+                status: 'success',
+                message: 'Mesin berhasil dihapus',
+            });
+            response.code(201);
             return response;
         } catch (error) {
             if (error instanceof ClientError) {
@@ -225,4 +213,4 @@ class UserHandler {
     }
 }
 
-module.exports = UserHandler;
+module.exports = MesinHandler;

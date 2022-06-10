@@ -240,6 +240,19 @@ class UsersService {
             throw new InvariantError('Gagal memperbarui foto profil, id tidak ditemukan');
         }
     }
+
+    async getIdByEmail(email) {
+        const query = {
+            text: 'SELECT id_pengguna FROM pengguna WHERE email = $1',
+            values: [email],
+        };
+        const result = await this._pool.query(query);
+        if (!result.rows.length) {
+            throw new InvariantError('email yang anda masukan belum terdaftar dalam sistem');
+        }
+
+        return result.rows[0].id_pengguna;
+    }
 }
 
 module.exports = UsersService;
