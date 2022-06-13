@@ -62,6 +62,68 @@ const routes = (handler) => [
             },
         },
     },
+    {
+        method: 'GET',
+        path: '/pabrik/{id}/mesin/{idMesin}/monitor',
+        handler: handler.getMesinMonitorHandler,
+        options: {
+            auth: 'moreapp_jwt',
+        },
+    },
+    {
+        method: 'PUT',
+        path: '/pabrik/{id}/mesin/{idMesin}/monitor',
+        handler: handler.putSettingAlarmHandler,
+        options: {
+            auth: 'moreapp_jwt',
+        },
+    },
+    {
+        method: 'GET',
+        path: '/pabrik/{id}/mesin/{idMesin}/laporan',
+        handler: handler.getMesinMonitorNameHandler,
+        options: {
+            auth: 'moreapp_jwt',
+        },
+    },
+    {
+        method: 'POST',
+        path: '/pabrik/{id}/mesin/{idMesin}/laporan',
+        handler: handler.getLaporanMesinHandler,
+        options: {
+            auth: 'moreapp_jwt',
+        },
+    },
+    {
+        method: 'POST',
+        path: '/pabrik/{id}/mesin/{idMesin}/dokumen',
+        handler: handler.postDokumenHandler,
+        options: {
+            auth: 'moreapp_jwt',
+            payload: {
+                allow: 'multipart/form-data',
+                multipart: true,
+                output: 'stream',
+                maxBytes: 50000000,
+            },
+        },
+    },
+    {
+        method: 'GET',
+        path: '/pabrik/{id}/mesin/{idMesin}/dokumen',
+        handler: handler.getDokumenHandler,
+        options: {
+            auth: 'moreapp_jwt',
+        },
+    },
+    {
+        method: 'DELETE',
+        path: '/pabrik/{id}/mesin/{idMesin}/dokumen/{idDoc}',
+        handler: handler.deleteDokumenHandler,
+        options: {
+            auth: 'moreapp_jwt',
+        },
+    },
 ];
 
 module.exports = routes;

@@ -1,3 +1,5 @@
+/* eslint-disable quote-props */
+/* eslint-disable no-plusplus */
 const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
@@ -29,6 +31,13 @@ class MesinService {
         };
 
         const result = await this._pool.query(query);
+
+        const queryT = {
+            text: 'SELECT * FROM monitor WHERE id_monitor = $1',
+            values: ['monitor-LpPr4mqcozhwRgaP'],
+        };
+        const resultT = await this._pool.query(queryT);
+        console.log(resultT.rows[0].variabel);
 
         return result.rows;
     }
@@ -72,6 +81,135 @@ class MesinService {
 
         if (!result.rows.length) {
             throw new InvariantError('Gagal mengapus mesin tersebut');
+        }
+    }
+
+    async viewMonitorMesin(id_mesin) {
+        const query = {
+            text: 'SELECT variabel FROM monitor WHERE id_mesin = $1',
+            values: [id_mesin],
+        };
+
+        const result = await this._pool.query(query);
+        const { variabel } = result.rows[0];
+
+        await this.getLaporan('mesin-yWUcTy-UVjHZGdI7', 'status', '1213', '1321');
+
+        return variabel;
+    }
+
+    async SettingAlarm(id_mesin, { nama, enable, min, max }) {
+        if (enable) {
+            if (min > max || max < min) {
+                throw new InvariantError('Min dan Max yang anda masukan tidak valid');
+            }
+        }
+        const query = {
+            text: 'SELECT *  FROM monitor WHERE id_mesin = $1',
+            values: [id_mesin],
+        };
+
+        const result = await this._pool.query(query);
+
+        let ke = -1;
+        const { variabel } = result.rows[0];
+        for (let i = 0; i < variabel.length; i++) {
+            if (variabel[i].nama === nama) {
+                ke = i;
+            }
+        }
+        console.log(result.rows[0]);
+
+        if (ke === -1) {
+            throw new InvariantError('namaMonitor yang ada masukan tidak valid');
+        }
+
+        const varTemp = variabel[ke];
+        varTemp.enableAlarm = enable;
+        varTemp.min = min;
+        varTemp.max = max;
+
+        variabel[ke] = varTemp;
+
+        const querySetting = {
+            text: 'UPDATE monitor SET variabel = $1 WHERE id_monitor = $2 RETURNING id_monitor',
+            values: [variabel, result.rows[0].id_monitor],
+        };
+
+        const resultSetting = await this._pool.query(querySetting);
+
+        if (!resultSetting.rows.length) {
+            throw new InvariantError('Gagal memperbarui setting alarm monitor');
+        }
+    }
+
+    async getMesinMonitorName(id_mesin) {
+        const query = {
+            text: 'SELECT variabel FROM monitor WHERE id_mesin = $1',
+            values: [id_mesin],
+        };
+
+        const result = await this._pool.query(query);
+        const { variabel } = result.rows[0];
+        const n = variabel.length;
+        const nama = [];
+        for (let i = 0; i < n; i++) {
+            nama.push(variabel[i].nama);
+        }
+        return nama;
+    }
+
+    async getLaporan(id_mesin, nama, start, stop) {
+        const query = {
+            text: 'SELECT timestamp, $1 FROM $2 WHERE timestamp >= $3 AND timestamp <= $4',
+            values: [nama, `laporan_${(id_mesin.replace(/-/g, '_'))}`, start, stop],
+        };
+
+        const result = await this._pool.query(query);
+
+        if (result.rows.length) {
+            throw new InvariantError('data yang anda cari tidak ditemukan');
+        }
+
+        return result.rows;
+    }
+
+    async addDokumen(id_mesin, nama, dokumen) {
+        const id = `dokumen-${nanoid(16)}`;
+
+        const query = {
+            text: 'INSERT INTO dokumen VALUES($1, $2, $3, $4) RETURNING id_dokumen',
+            values: [id, id_mesin, nama, dokumen],
+        };
+
+        const result = await this._pool.query(query);
+
+        if (!result.rows.length) {
+            throw new InvariantError('Gagal menambahkan dokuman');
+        }
+    }
+
+    async getDokumen(id_mesin) {
+        const query = {
+            text: 'SELECT * FROM dokumen WHERE id_mesin = $1',
+            values: [id_mesin],
+        };
+
+        const result = await this._pool.query(query);
+
+        return result.rows;
+    }
+
+    async deleteDokumen(id_dokumen) {
+        const query = {
+            text: 'DELETE FROM dokumen WHERE id_dokumen = $1 RETURNING id_dokumen',
+            values: [id_dokumen],
+        };
+
+        const result = await this._pool.query(query);
+
+        if (!result.rows.length) {
+            throw new InvariantError('Gagal menghapus dokumen tersebut');
         }
     }
 

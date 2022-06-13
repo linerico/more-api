@@ -47,6 +47,7 @@ const init = async () => {
     const storageServicePabrik = new StorageService(path.resolve(__dirname, 'api/pabrik/file/images'));
     const pabrikService = new PabrikService(aksesService);
     const storageServiceMesin = new StorageService(path.resolve(__dirname, 'api/mesin/file/images'));
+    const storageServiceMesinDokumen = new StorageService(path.resolve(__dirname, 'api/mesin/file/dokumen'));
 
     const server = Hapi.server({
         port: process.env.PORT,
@@ -127,6 +128,7 @@ const init = async () => {
                 aksesService,
                 storageService: storageServiceMesin,
                 validator: MesinValidator,
+                storageServiceDokumen: storageServiceMesinDokumen,
             },
         },
     ]);
