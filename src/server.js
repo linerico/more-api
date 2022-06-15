@@ -5,6 +5,9 @@ const Jwt = require('@hapi/jwt');
 const Inert = require('@hapi/inert');
 const path = require('path');
 
+// Start
+const start = require('./api/start');
+
 // Users
 const users = require('./api/users');
 const UsersService = require('./services/postgres/UsersService');
@@ -93,6 +96,9 @@ const init = async () => {
     });
 
     await server.register([
+        {
+            plugin: start,
+        },
         {
             plugin: users,
             options: {
