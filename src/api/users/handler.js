@@ -15,6 +15,15 @@ class UserHandler {
         this.putUserProfilImageHandler = this.putUserProfilImageHandler.bind(this);
     }
 
+    // eslint-disable-next-line class-methods-use-this
+    async getStartHandler(request, h) {
+        const response = h.response({
+            status: 'success',
+            message: 'Selamat datang di Rest API Aplikasi MoRe (Monitoring and Resport System)',
+        });
+        return response;
+    }
+
     async postUserHandler(request, h) {
         try {
             console.log(request.payload);

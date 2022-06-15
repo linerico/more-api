@@ -2,6 +2,11 @@ const path = require('path');
 
 const routes = (handler) => [
     {
+        method: 'GET',
+        path: '/',
+        handler: handler.getStartHandler,
+    },
+    {
         method: 'POST',
         path: '/users/register',
         handler: handler.postUserHandler,
