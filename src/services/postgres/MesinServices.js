@@ -1,3 +1,6 @@
+/* eslint-disable no-const-assign */
+/* eslint-disable quotes */
+/* eslint-disable space-unary-ops */
 /* eslint-disable quote-props */
 /* eslint-disable no-plusplus */
 const { nanoid } = require('nanoid');
@@ -92,8 +95,6 @@ class MesinService {
 
         const result = await this._pool.query(query);
         const { variabel } = result.rows[0];
-
-        await this.getLaporan('mesin-yWUcTy-UVjHZGdI7', 'status', '1213', '1321');
 
         return variabel;
     }

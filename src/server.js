@@ -31,6 +31,10 @@ const mesin = require('./api/mesin');
 const MesinService = require('./services/postgres/MesinServices');
 const MesinValidator = require('./validator/mesin');
 
+// Notifikasi
+const notifikasi = require('./api/notifikasi');
+const NotifikasiService = require('./services/postgres/NotifikasiServices');
+
 // Mail
 const MailSender = require('./services/mail/MailSender');
 
@@ -43,6 +47,7 @@ const init = async () => {
     const authenticationsService = new AuthenticationsService();
     const aksesService = new AksesService(usersService);
     const mesinService = new MesinService();
+    const notifikasiService = new NotifikasiService();
     const storageService = new StorageService(path.resolve(__dirname, 'api/users/file/images'));
     const storageServicePabrik = new StorageService(path.resolve(__dirname, 'api/pabrik/file/images'));
     const pabrikService = new PabrikService(aksesService);
@@ -129,6 +134,12 @@ const init = async () => {
                 storageService: storageServiceMesin,
                 validator: MesinValidator,
                 storageServiceDokumen: storageServiceMesinDokumen,
+            },
+        },
+        {
+            plugin: notifikasi,
+            options: {
+                service: notifikasiService,
             },
         },
     ]);
