@@ -21,10 +21,10 @@ class PabrikHandler {
 
             const { id: credentialId } = request.auth.credentials;
 
-            const filename = await this._storageService.writeFile(gambar_pabrik, gambar_pabrik.hapi);
-            const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/pabrik/images/${filename}`;
+            const filename = await this._storageService.writeFile(gambar_pabrik, gambar_pabrik.hapi, '/pabrik/img');
+            // const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/pabrik/images/${filename}`;
 
-            const id_pabrik = await this._service.addPabrik(credentialId, { nama_pabrik, alamat_pabrik, kab_kota_pabrik, provinsi_pabrik, gambar_pabrik: fileLocation, peta_pabrik });
+            const id_pabrik = await this._service.addPabrik(credentialId, { nama_pabrik, alamat_pabrik, kab_kota_pabrik, provinsi_pabrik, gambar_pabrik: filename, peta_pabrik });
 
             const response = h.response({
                 status: 'success',
@@ -130,10 +130,10 @@ class PabrikHandler {
             const { id: credentialId } = request.auth.credentials;
             const { id } = request.params;
 
-            const filename = await this._storageService.writeFile(gambar_pabrik, gambar_pabrik.hapi);
-            const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/pabrik/images/${filename}`;
+            const filename = await this._storageService.writeFile(gambar_pabrik, gambar_pabrik.hapi, '/pabrik/img');
+            // const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/pabrik/images/${filename}`;
 
-            await this._service.editPabrik(credentialId, id, { nama_pabrik, alamat_pabrik, kab_kota_pabrik, provinsi_pabrik, gambar_pabrik: fileLocation, peta_pabrik });
+            await this._service.editPabrik(credentialId, id, { nama_pabrik, alamat_pabrik, kab_kota_pabrik, provinsi_pabrik, gambar_pabrik: filename, peta_pabrik });
 
             const response = h.response({
                 status: 'ok',

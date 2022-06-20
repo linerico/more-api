@@ -3,7 +3,7 @@ require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
 const Inert = require('@hapi/inert');
-const path = require('path');
+// const path = require('path');
 
 // Users
 const users = require('./src/api/users');
@@ -39,7 +39,10 @@ const NotifikasiService = require('./src/services/postgres/NotifikasiServices');
 const MailSender = require('./src/services/mail/MailSender');
 
 // Storage
-const StorageService = require('./src/services/storage/StorageService');
+// const StorageService = require('./src/services/storage/StorageService');
+
+// Storage S3
+const StorageServiceS3 = require('./src/services/S3/StorageService');
 
 const init = async () => {
     const usersService = new UsersService();
@@ -48,11 +51,11 @@ const init = async () => {
     const aksesService = new AksesService(usersService);
     const mesinService = new MesinService();
     const notifikasiService = new NotifikasiService();
-    const storageService = new StorageService(path.resolve(__dirname, 'api/users/file/images'));
-    const storageServicePabrik = new StorageService(path.resolve(__dirname, 'api/pabrik/file/images'));
+    const storageService = new StorageServiceS3(); // Storage
+    const storageServicePabrik = new StorageServiceS3(); // Storage
     const pabrikService = new PabrikService(aksesService);
-    const storageServiceMesin = new StorageService(path.resolve(__dirname, 'api/mesin/file/images'));
-    const storageServiceMesinDokumen = new StorageService(path.resolve(__dirname, 'api/mesin/file/dokumen'));
+    const storageServiceMesin = new StorageServiceS3(); // Storage
+    const storageServiceMesinDokumen = new StorageServiceS3(); // Storage
 
     const server = Hapi.server({
         port: process.env.PORT,

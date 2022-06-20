@@ -35,10 +35,10 @@ class MesinHandler {
             await this._aksesService.verifyAksesPemilikAdminPabrik(credentialId, id_pabrik);
             await this._service.verifyNamaMesin(id_pabrik, nama_mesin);
 
-            const filename = await this._storageService.writeFile(gambar_mesin, gambar_mesin.hapi);
-            const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/mesin/images/${filename}`;
+            const filename = await this._storageService.writeFile(gambar_mesin, gambar_mesin.hapi, '/mesin/img');
+            // const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/mesin/images/${filename}`;
 
-            await this._service.addMesin(id_pabrik, { nama_mesin, tipe_mesin, merek_mesin, gambar_mesin: fileLocation });
+            await this._service.addMesin(id_pabrik, { nama_mesin, tipe_mesin, merek_mesin, gambar_mesin: filename });
 
             const response = h.response({
                 status: 'success',
@@ -153,10 +153,10 @@ class MesinHandler {
             await this._aksesService.verifyAksesPemilikAdminPabrik(credentialId, id_pabrik);
             // await this._service.verifyNamaMesin(id_pabrik, nama_mesin);
 
-            const filename = await this._storageService.writeFile(gambar_mesin, gambar_mesin.hapi);
-            const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/mesin/images/${filename}`;
+            const filename = await this._storageService.writeFile(gambar_mesin, gambar_mesin.hapi, '/mesin/img');
+            // const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/mesin/images/${filename}`;
 
-            await this._service.editMesin(id_pabrik, id_mesin, { nama_mesin, tipe_mesin, merek_mesin, gambar_mesin: fileLocation });
+            await this._service.editMesin(id_pabrik, id_mesin, { nama_mesin, tipe_mesin, merek_mesin, gambar_mesin: filename });
 
             const response = h.response({
                 status: 'success',
@@ -384,13 +384,13 @@ class MesinHandler {
 
             await this._aksesService.verifyAksesPemilikAdminPabrik(credentialId, id_pabrik);
 
-            const filename = await this._storageServiceDokumen.writeFile(dokumen, dokumen.hapi);
-            const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/mesin/dokumen/${filename}`;
+            const filename = await this._storageServiceDokumen.writeFile(dokumen, dokumen.hapi, '/mesin/doc');
+            // const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/mesin/dokumen/${filename}`;
             console.log(gantiNama, nama);
             if (gantiNama == 1) {
-                await this._service.addDokumen(id_mesin, nama, fileLocation);
+                await this._service.addDokumen(id_mesin, nama, filename);
             } else {
-                await this._service.addDokumen(id_mesin, filename, fileLocation);
+                await this._service.addDokumen(id_mesin, filename, filename);
             }
             const response = h.response({
                 status: 'success',

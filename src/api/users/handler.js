@@ -199,16 +199,16 @@ class UserHandler {
             this._validator.validatorProfilImagePayload(img.hapi.headers);
             const { id: credentialId } = request.auth.credentials;
 
-            const filename = await this._storageService.writeFile(img, img.hapi);
-            const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/profil/images/${filename}`;
+            const filename = await this._storageService.writeFile(img, img.hapi, '/user/img');
+            // const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/profil/images/${filename}`;
 
-            await this._service.uploadProfilImg(credentialId, fileLocation);
+            await this._service.uploadProfilImg(credentialId, filename);
 
             const response = h.response({
                 status: 'success',
                 message: 'foto profil berhasil diperbarui',
                 data: {
-                    fileLocation,
+                    fileLocation: filename,
                 },
             });
             return response;
