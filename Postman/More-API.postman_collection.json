@@ -1,0 +1,1205 @@
+{
+	"info": {
+		"_postman_id": "1a72eccd-5ad6-4dc1-95b6-eaad0bbeedec",
+		"name": "More-API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16400387"
+	},
+	"item": [
+		{
+			"name": "Pengguna",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nama_pengguna\": \"Erico\",\r\n    \"email\": \"linerico23@gmail.com\",\r\n    \"password\": \"test123\",\r\n    \"no_telepon\": \"085270047772\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}:5000/users/register",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send Email Verifikasi",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"linerico23@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}:5000/users/sendverifikasi",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"users",
+								"sendverifikasi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verifikasi Email",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"linerico23@gmail.com\",\r\n    \"kode\": \"1744\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}:5000/users/verifikasi",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"users",
+								"verifikasi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{host}}:5000/users",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nama_pengguna\": \"Erico\",\r\n    \"password\": \"test123\",\r\n    \"no_telepon\": \"085270047772\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}:5000/users",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Foto Profil",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "img",
+									"type": "file",
+									"src": "MoRE (3).png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{host}}:5000/users/uploadprofilimage",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"users",
+								"uploadprofilimage"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentications",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('it should response 201 status code', () => {\r",
+									"    const responseJson = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(pm.response).to.have.status(201);\r",
+									"\r",
+									"    pm.environment.set('token', responseJson.data.accessToken);\r",
+									"\r",
+									"    pm.environment.set('reftoken', responseJson.data.refreshToken);\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"linerico23@gmail.com\",\r\n    \"password\": \"test123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}:5000/authentications",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"authentications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refreshToken\": \"{{reftoken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}:5000/authentications",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"authentications"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pabrik",
+			"item": [
+				{
+					"name": "Add Pabrik",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "nama_pabrik",
+									"value": "kalam kalam",
+									"type": "text"
+								},
+								{
+									"key": "alamat_pabrik",
+									"value": "medan",
+									"type": "text"
+								},
+								{
+									"key": "kab_kota_pabrik",
+									"value": "deli serdang",
+									"type": "text"
+								},
+								{
+									"key": "provinsi_pabrik",
+									"value": "sumatera utara",
+									"type": "text"
+								},
+								{
+									"key": "gambar_pabrik",
+									"type": "file",
+									"src": "MoRE (3).png"
+								},
+								{
+									"key": "peta_pabrik",
+									"value": "https://goo.gl/maps/5hogZ6QBX2gQsxjh7",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{host}}:5000/pabrik",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"pabrik"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Pabrik",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://{{host}}:5000/pabrik",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"pabrik"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Pabrik By Name",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}:5000/pabrik/ka",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"pabrik",
+								"ka"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Pabrik",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "nama_pabrik",
+									"value": "numalos",
+									"type": "text"
+								},
+								{
+									"key": "alamat_pabrik",
+									"value": "medan",
+									"type": "text"
+								},
+								{
+									"key": "kab_kota_pabrik",
+									"value": "deli serdang",
+									"type": "text"
+								},
+								{
+									"key": "provinsi_pabrik",
+									"value": "sumatera utara",
+									"type": "text"
+								},
+								{
+									"key": "gambar_pabrik",
+									"type": "file",
+									"src": "MoRE (3).png"
+								},
+								{
+									"key": "peta_pabrik",
+									"value": "https://goo.gl/maps/5hogZ6QBX2gQsxjh7",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{host}}:5000/pabrik/pabrik-a2C8lc9niZIDV7mC",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"pabrik",
+								"pabrik-a2C8lc9niZIDV7mC"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Pabrik",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://{{host}}:5000/pabrik/pabrik-cYVI6NghBC4gaa_6",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"pabrik",
+								"pabrik-cYVI6NghBC4gaa_6"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Akses",
+			"item": [
+				{
+					"name": "Add Akses",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_pabrik\": \"pabrik-a2C8lc9niZIDV7mC\",\r\n    \"email\": \"linerico0301@gmail.com\",\r\n    \"status\": \"ANGGOTA\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}:5000/akses",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"akses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Akses",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_pabrik\": \"pabrik-LpPr4mqcozhwRgaP\",\r\n    \"email\": \"linerico23@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}:5000/akses",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"akses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Anggota Pabrik",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{host}}:5000/akses/pabrik-xiOI9LsjiGl6KNXU",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"akses",
+								"pabrik-xiOI9LsjiGl6KNXU"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Mesin",
+			"item": [
+				{
+					"name": "Add Mesin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "nama_mesin",
+									"value": "Decanter 1",
+									"type": "text"
+								},
+								{
+									"key": "tipe_mesin",
+									"value": "Z5E",
+									"type": "text"
+								},
+								{
+									"key": "merek_mesin",
+									"value": "Flottweg",
+									"type": "text"
+								},
+								{
+									"key": "gambar_mesin",
+									"type": "file",
+									"src": "MoRE (3).png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{host}}:5000/pabrik/pabrik-xiOI9LsjiGl6KNXU/mesin",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"pabrik",
+								"pabrik-xiOI9LsjiGl6KNXU",
+								"mesin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Mesin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{host}}:5000/pabrik/pabrik-xiOI9LsjiGl6KNXU/mesin",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"pabrik",
+								"pabrik-xiOI9LsjiGl6KNXU",
+								"mesin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Mesin By Name",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{host}}:5000/pabrik/pabrik-xiOI9LsjiGl6KNXU/mesin/ecan",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"pabrik",
+								"pabrik-xiOI9LsjiGl6KNXU",
+								"mesin",
+								"ecan"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Mesin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "nama_mesin",
+									"value": "Decanter 1",
+									"type": "text"
+								},
+								{
+									"key": "tipe_mesin",
+									"value": "Z5E",
+									"type": "text"
+								},
+								{
+									"key": "merek_mesin",
+									"value": "Flottweg",
+									"type": "text"
+								},
+								{
+									"key": "gambar_mesin",
+									"type": "file",
+									"src": "MoRE (3).png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{host}}:5000/pabrik/pabrik-xiOI9LsjiGl6KNXU/mesin/mesin-BZDINYoovebwhO4v",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"pabrik",
+								"pabrik-xiOI9LsjiGl6KNXU",
+								"mesin",
+								"mesin-BZDINYoovebwhO4v"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Mesin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://{{host}}:5000/pabrik/pabrik-LpPr4mqcozhwRgaP/mesin/mesin-QzQSfObSVEvlMomZ",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"pabrik",
+								"pabrik-LpPr4mqcozhwRgaP",
+								"mesin",
+								"mesin-QzQSfObSVEvlMomZ"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Monitor",
+			"item": [
+				{
+					"name": "Get Monitor",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{host}}:5000/pabrik/pabrik-xiOI9LsjiGl6KNXU/mesin/mesin-BZDINYoovebwhO4v/monitor",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"pabrik",
+								"pabrik-xiOI9LsjiGl6KNXU",
+								"mesin",
+								"mesin-BZDINYoovebwhO4v",
+								"monitor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setting Alarm",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nama\": \"Status\",\r\n    \"enable\": true,\r\n    \"min\": 1,\r\n    \"max\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}:5000/pabrik/pabrik-xiOI9LsjiGl6KNXU/mesin/mesin-BZDINYoovebwhO4v/monitor",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"pabrik",
+								"pabrik-xiOI9LsjiGl6KNXU",
+								"mesin",
+								"mesin-BZDINYoovebwhO4v",
+								"monitor"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Laporan",
+			"item": [
+				{
+					"name": "Get Variabel Name",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{host}}:5000/pabrik/pabrik-xiOI9LsjiGl6KNXU/mesin/mesin-BZDINYoovebwhO4v/laporan",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"pabrik",
+								"pabrik-xiOI9LsjiGl6KNXU",
+								"mesin",
+								"mesin-BZDINYoovebwhO4v",
+								"laporan"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Laporan",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nama\": \"status\",\r\n    \"start\": \"datetime\",\r\n    \"stop\": \"datetime\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{host}}:5000/pabrik/pabrik-xiOI9LsjiGl6KNXU/mesin/mesin-BZDINYoovebwhO4v/laporan",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"pabrik",
+								"pabrik-xiOI9LsjiGl6KNXU",
+								"mesin",
+								"mesin-BZDINYoovebwhO4v",
+								"laporan"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Dokumen",
+			"item": [
+				{
+					"name": "Add new Dokumen",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "gantiNama",
+									"value": "0",
+									"type": "text"
+								},
+								{
+									"key": "nama",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "dokumen",
+									"type": "file",
+									"src": "MoRE (3).png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{host}}:5000/pabrik/pabrik-LpPr4mqcozhwRgaP/mesin/mesin-yWUcTy-UVjHZGdI7/dokumen",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"pabrik",
+								"pabrik-LpPr4mqcozhwRgaP",
+								"mesin",
+								"mesin-yWUcTy-UVjHZGdI7",
+								"dokumen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Dokumen",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{host}}:5000/pabrik/pabrik-LpPr4mqcozhwRgaP/mesin/mesin-yWUcTy-UVjHZGdI7/dokumen",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"pabrik",
+								"pabrik-LpPr4mqcozhwRgaP",
+								"mesin",
+								"mesin-yWUcTy-UVjHZGdI7",
+								"dokumen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Dokumen",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://{{host}}:5000/pabrik/pabrik-LpPr4mqcozhwRgaP/mesin/mesin-yWUcTy-UVjHZGdI7/dokumen/dokumen-_gKxs_fQpvakvEr7",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"pabrik",
+								"pabrik-LpPr4mqcozhwRgaP",
+								"mesin",
+								"mesin-yWUcTy-UVjHZGdI7",
+								"dokumen",
+								"dokumen-_gKxs_fQpvakvEr7"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notifikasi",
+			"item": [
+				{
+					"name": "Get Notifikasi",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{host}}:5000/notifikasi",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"notifikasi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Notifikasi",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://{{host}}:5000/notifikasi/notifikasi-cylql-NwfVPufE2S",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"port": "5000",
+							"path": [
+								"notifikasi",
+								"notifikasi-cylql-NwfVPufE2S"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
