@@ -35,13 +35,6 @@ class MesinService {
 
         const result = await this._pool.query(query);
 
-        const queryT = {
-            text: 'SELECT * FROM monitor WHERE id_monitor = $1',
-            values: ['monitor-LpPr4mqcozhwRgaP'],
-        };
-        const resultT = await this._pool.query(queryT);
-        console.log(resultT.rows[0].variabel);
-
         return result.rows;
     }
 
