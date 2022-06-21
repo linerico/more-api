@@ -6,43 +6,43 @@ const Inert = require('@hapi/inert');
 // const path = require('path');
 
 // Users
-const users = require('./src/api/users');
-const UsersService = require('./src/services/postgres/UsersService');
-const UsersValidator = require('./src/validator/users');
+const users = require('./api/users');
+const UsersService = require('./services/postgres/UsersService');
+const UsersValidator = require('./validator/users');
 
 // AUthentications
-const authentications = require('./src/api/authentications');
-const AuthenticationsService = require('./src/services/postgres/AuthenticationsService');
-const TokenManager = require('./src/tokenize/TokenManager');
-const AuthenticationsValidator = require('./src/validator/authentications');
+const authentications = require('./api/authentications');
+const AuthenticationsService = require('./services/postgres/AuthenticationsService');
+const TokenManager = require('./tokenize/TokenManager');
+const AuthenticationsValidator = require('./validator/authentications');
 
 // Pabrik
-const pabrik = require('./src/api/pabrik');
-const PabrikService = require('./src/services/postgres/PabrikServices');
-const PabrikValidator = require('./src/validator/pabrik');
+const pabrik = require('./api/pabrik');
+const PabrikService = require('./services/postgres/PabrikServices');
+const PabrikValidator = require('./validator/pabrik');
 
 // Akses
-const akses = require('./src/api/akses');
-const AksesService = require('./src/services/postgres/AksesServices');
-const AksesValidator = require('./src/validator/akses');
+const akses = require('./api/akses');
+const AksesService = require('./services/postgres/AksesServices');
+const AksesValidator = require('./validator/akses');
 
 // Mesin
-const mesin = require('./src/api/mesin');
-const MesinService = require('./src/services/postgres/MesinServices');
-const MesinValidator = require('./src/validator/mesin');
+const mesin = require('./api/mesin');
+const MesinService = require('./services/postgres/MesinServices');
+const MesinValidator = require('./validator/mesin');
 
 // Notifikasi
-const notifikasi = require('./src/api/notifikasi');
-const NotifikasiService = require('./src/services/postgres/NotifikasiServices');
+const notifikasi = require('./api/notifikasi');
+const NotifikasiService = require('./services/postgres/NotifikasiServices');
 
 // Mail
-const MailSender = require('./src/services/mail/MailSender');
+const MailSender = require('./services/mail/MailSender');
 
 // Storage
 // const StorageService = require('./src/services/storage/StorageService');
 
 // Storage S3
-const StorageServiceS3 = require('./src/services/S3/StorageService');
+const StorageServiceS3 = require('./services/S3/StorageService');
 
 const init = async () => {
     const usersService = new UsersService();
