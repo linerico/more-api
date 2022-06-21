@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js",
-    "start-prod": "NODE_ENV=production node app.js",
-    "start-dev": "nodemon app.js",
+    "start": "node server.js",
+    "start-prod": "NODE_ENV=production node server.js",
+    "start-dev": "node server.js",
     "lint": "eslint ./",
     "migrate": "node-pg-migrate"
   },
