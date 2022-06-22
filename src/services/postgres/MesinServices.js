@@ -24,6 +24,12 @@ class MesinService {
             throw new InvariantError('Mesin gagal ditambahkan');
         }
 
+        const queryLaporan = {
+            text: `create table laporan_${(id.replace(/-/g, '_'))} ( id_laporan VARCHAR(50), timestamp TEXT, laporan JSON[] )`,
+        };
+
+        await this._pool.query(queryLaporan);
+
         return result.rows[0].id_mesin;
     }
 
