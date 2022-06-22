@@ -23,9 +23,9 @@ class MesinService {
         if (!result.rows.length) {
             throw new InvariantError('Mesin gagal ditambahkan');
         }
-
+        console.log(result.rows[0].id_mesin, result.rows[0].id_mesin.replace(/-/g, '_'));
         const queryLaporan = {
-            text: `create table laporan_${(id.replace(/-/g, '_'))} ( id_laporan VARCHAR(50), timestamp TEXT, laporan JSON[] )`,
+            text: `create table laporan_${(result.rows[0].id_mesin.replace(/-/g, '_'))} ( id_laporan VARCHAR(50), timestamp TEXT, laporan JSON[] )`,
         };
 
         await this._pool.query(queryLaporan);
@@ -150,20 +150,25 @@ class MesinService {
         };
 
         const result = await this._pool.query(query);
-        const { variabel } = result.rows[0];
-        const n = variabel.length;
-        const nama = [];
-        for (let i = 0; i < n; i++) {
-            nama.push(variabel[i].nama);
+        try {
+            const { variabel } = result.rows[0];
+            const n = variabel.length;
+            const nama = [];
+            for (let i = 0; i < n; i++) {
+                nama.push(variabel[i].nama);
+            }
+            return nama;
+        } catch (error) {
+            return [];
         }
-        return nama;
     }
 
     async getLaporan(id_mesin, nama, start, stop) {
         const query = {
-            text: 'SELECT timestamp, $1 FROM $2 WHERE timestamp >= $3 AND timestamp <= $4',
-            values: [nama, `laporan_${(id_mesin.replace(/-/g, '_'))}`, start, stop],
+            text: `SELECT timestamp, $1 FROM laporan_${(id_mesin.replace(/-/g, '_').toLowerCase())} WHERE timestamp >= $2 AND timestamp <= $3`,
+            values: [nama, start, stop],
         };
+        console.log(query);
 
         const result = await this._pool.query(query);
 
