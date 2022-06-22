@@ -23,12 +23,17 @@ class MesinService {
         if (!result.rows.length) {
             throw new InvariantError('Mesin gagal ditambahkan');
         }
-        console.log(result.rows[0].id_mesin, result.rows[0].id_mesin.replace(/-/g, '_'));
         const queryLaporan = {
             text: `create table laporan_${(result.rows[0].id_mesin.replace(/-/g, '_'))} ( id_laporan VARCHAR(50), timestamp TEXT, laporan JSON[] )`,
         };
-
         await this._pool.query(queryLaporan);
+
+        const idMonitor = `monitor-${nanoid(16)}`;
+        const queryMonitor = {
+            text: 'INSERT INTO monitor VALUES ($1, $2, $3)',
+            values: [idMonitor, result.rows[0].id_mesin, []],
+        };
+        await this._pool.query(queryMonitor);
 
         return result.rows[0].id_mesin;
     }
