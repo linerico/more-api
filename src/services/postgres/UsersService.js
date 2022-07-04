@@ -144,11 +144,6 @@ class UsersService {
     }
 
     async verifyUserCredential(email, password) {
-        const stsVerify = await this.verifyEmailVerifikasi(email);
-        if (!stsVerify) {
-            throw new ForbiddenError('Email yang ada masukan belum terverifikasi');
-        }
-
         const query = {
             text: 'SELECT id_pengguna, password FROM pengguna WHERE email = $1',
             values: [email],
@@ -167,7 +162,10 @@ class UsersService {
         if (!match) {
             throw new AuthenticationError('Kredennsial yang Anda berikan salah');
         }
-        console.log(id_pengguna);
+        const stsVerify = await this.verifyEmailVerifikasi(email);
+        if (!stsVerify) {
+            throw new ForbiddenError('Email yang ada masukan belum terverifikasi');
+        }
         return id_pengguna;
     }
 
