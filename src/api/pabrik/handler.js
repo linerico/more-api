@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 const ClientError = require('../../exceptions/ClientError');
 
 class PabrikHandler {
@@ -17,8 +18,9 @@ class PabrikHandler {
         try {
             const { nama_pabrik, alamat_pabrik, kab_kota_pabrik, provinsi_pabrik, gambar_pabrik, peta_pabrik } = request.payload;
             this._validator.validatePabrikPayload({ nama_pabrik, alamat_pabrik, kab_kota_pabrik, provinsi_pabrik, peta_pabrik });
-            this._validator.validatePabrikImgPayload(gambar_pabrik.hapi.headers);
-
+            if (peta_pabrik != undefined) {
+                this._validator.validatePabrikImgPayload(gambar_pabrik.hapi.headers);
+            }
             const { id: credentialId } = request.auth.credentials;
 
             const filename = await this._storageService.writeFile(gambar_pabrik, gambar_pabrik.hapi, '/pabrik/img');
