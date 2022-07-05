@@ -9,7 +9,7 @@ const PabrikDataPayloadSchema = Joi.object({
 });
 
 const PabrikImgHeadersSchema = Joi.object({
-    'content-type': Joi.string().valid('image/apng', 'image/avif', 'image/gif', 'image/jpeg', 'image/png', 'image/webp'),
+    'content-type': Joi.string().valid('image/apng', 'image/avif', 'image/gif', 'image/jpeg', 'image/png', 'image/webp').required(),
 }).unknown();
 
 module.exports = { PabrikDataPayloadSchema, PabrikImgHeadersSchema };
