@@ -17,13 +17,17 @@ class PabrikHandler {
     async postPabrikHandler(request, h) {
         try {
             const { nama_pabrik, alamat_pabrik, kab_kota_pabrik, provinsi_pabrik, gambar_pabrik, peta_pabrik } = request.payload;
+            let filename;
             this._validator.validatePabrikPayload({ nama_pabrik, alamat_pabrik, kab_kota_pabrik, provinsi_pabrik, peta_pabrik });
-            if (peta_pabrik != undefined) {
+            console.log(gambar_pabrik);
+            if (gambar_pabrik != undefined) {
+                console.log('Gambar != undefine');
                 this._validator.validatePabrikImgPayload(gambar_pabrik.hapi.headers);
             }
             const { id: credentialId } = request.auth.credentials;
-
-            const filename = await this._storageService.writeFile(gambar_pabrik, gambar_pabrik.hapi, '/pabrik/img');
+            if (gambar_pabrik != undefined) {
+                filename = await this._storageService.writeFile(gambar_pabrik, gambar_pabrik.hapi, '/pabrik/img');
+            }
             // const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/pabrik/images/${filename}`;
 
             const id_pabrik = await this._service.addPabrik(credentialId, { nama_pabrik, alamat_pabrik, kab_kota_pabrik, provinsi_pabrik, gambar_pabrik: filename, peta_pabrik });
