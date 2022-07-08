@@ -20,6 +20,14 @@ const routes = (handler) => [
             auth: 'moreapp_jwt',
         },
     },
+    {
+        method: 'GET',
+        path: '/notifikasi/unread',
+        handler: handler.getUnreadNotifikasi,
+        options: {
+            auth: 'moreapp_jwt',
+        },
+    },
 ];
 
 module.exports = routes;

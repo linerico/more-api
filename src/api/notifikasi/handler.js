@@ -7,6 +7,7 @@ class NotifikasiHandler {
         this.postNotifikasiHandler = this.postNotifikasiHandler.bind(this);
         this.getNotifikasiHandler = this.getNotifikasiHandler.bind(this);
         this.putStatusBacaHandler = this.putStatusBacaHandler.bind(this);
+        this.getUnreadNotifikasi = this.getUnreadNotifikasi.bind(this);
     }
 
     async postNotifikasiHandler(request, h) {
@@ -83,6 +84,39 @@ class NotifikasiHandler {
             const response = h.response({
                 status: 'success',
                 message: 'berhasil berubah status baca notifikasi',
+            });
+            return response;
+        } catch (error) {
+            if (error instanceof ClientError) {
+                const response = h.response({
+                    status: 'fail',
+                    message: error.message,
+                });
+                response.code(error.statusCode);
+                return response;
+            }
+
+            // Server ERROR!
+            const response = h.response({
+                status: 'error',
+                message: 'Maaf, terjadi kegagalan pada server kami.',
+            });
+            response.code(500);
+            console.error(error);
+            return response;
+        }
+    }
+
+    async getUnreadNotifikasi(request, h) {
+        try {
+            const { id: credentialId } = request.auth.credentials;
+            const unread = await this._service.isUnread(credentialId);
+
+            const response = h.response({
+                status: 'success',
+                data: {
+                    unread,
+                },
             });
             return response;
         } catch (error) {

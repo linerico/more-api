@@ -64,6 +64,24 @@ class NotifikasiService {
             throw new InvariantError('Gagal Merubah status baca notifikasi');
         }
     }
+
+    async isUnread(id_pengguna) {
+        let sts = false;
+        const query = {
+            text: 'SELECT * FROM notifikasi WHERE id_pengguna = $1',
+            values: [id_pengguna],
+        };
+
+        const result = await this._pool.query(query);
+        for (let i = 0; i < result.rows.length; i++) {
+            if (result.rows[i].baca === false) {
+                sts = true;
+                break;
+            }
+        }
+
+        return sts;
+    }
 }
 
 module.exports = NotifikasiService;
