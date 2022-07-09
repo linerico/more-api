@@ -11,6 +11,7 @@ class MesinHandler {
 
         this.postMesinHandler = this.postMesinHandler.bind(this);
         this.getMesinHandler = this.getMesinHandler.bind(this);
+        this.getMesinByIdHandler = this.getMesinByIdHandler.bind(this);
         this.getMesinByNameHandler = this.getMesinByNameHandler.bind(this);
         this.putMesinHandler = this.putMesinHandler.bind(this);
         this.deleteMesinHandler = this.deleteMesinHandler.bind(this);
@@ -75,6 +76,43 @@ class MesinHandler {
             await this._aksesService.cekStatus(credentialId, id_pabrik);
 
             const mesin = await this._service.getMesin(id_pabrik);
+
+            const response = h.response({
+                status: 'success',
+                data: {
+                    mesin,
+                },
+            });
+            return response;
+        } catch (error) {
+            if (error instanceof ClientError) {
+                const response = h.response({
+                    status: 'fail',
+                    message: error.message,
+                });
+                response.code(error.statusCode);
+                return response;
+            }
+
+            // Server ERROR!
+            const response = h.response({
+                status: 'error',
+                message: 'Maaf, terjadi kegagalan pada server kami.',
+            });
+            response.code(500);
+            console.error(error);
+            return response;
+        }
+    }
+
+    async getMesinByIdHandler(request, h) {
+        try {
+            const { id: id_pabrik, idMesin } = request.params;
+            const { id: credentialId } = request.auth.credentials;
+
+            await this._aksesService.cekStatus(credentialId, id_pabrik);
+
+            const mesin = await this._service.getMesinById(id_pabrik, idMesin);
 
             const response = h.response({
                 status: 'success',

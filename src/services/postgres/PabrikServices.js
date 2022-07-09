@@ -53,6 +53,19 @@ class PabrikService {
         return result.rows;
     }
 
+    async getPabrikById(userId, pabrikId) {
+        const query = {
+            text: `SELECT pabrik.* FROM pabrik 
+            LEFT JOIN akses_pengguna_pabrik ON akses_pengguna_pabrik.id_pabrik = pabrik.id_pabrik 
+            WHERE akses_pengguna_pabrik.id_pengguna = $1 AND pabrik.id_pabrik = $2
+            GROUP BY pabrik.id_pabrik`,
+            values: [userId, pabrikId],
+        };
+        const result = await this._pool.query(query);
+
+        return result.rows[0];
+    }
+
     async getPabrikByName(userId, filterNama) {
         const query = {
             text: `SELECT pabrik.* FROM pabrik 

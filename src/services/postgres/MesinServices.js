@@ -24,7 +24,7 @@ class MesinService {
             throw new InvariantError('Mesin gagal ditambahkan');
         }
         const queryLaporan = {
-            text: `create table laporan_${(result.rows[0].id_mesin.replace(/-/g, '_'))} ( id_laporan VARCHAR(50), id_mesin VARCHAR(50) timestamp TEXT, laporan JSON[] )`,
+            text: `create table laporan_${(result.rows[0].id_mesin.replace(/-/g, '_'))} ( id_laporan VARCHAR(50), id_mesin VARCHAR(50), timestamp TEXT, laporan JSON[] )`,
         };
         await this._pool.query(queryLaporan);
 
@@ -47,6 +47,17 @@ class MesinService {
         const result = await this._pool.query(query);
 
         return result.rows;
+    }
+
+    async getMesinById(id_pabrik, id_mesin) {
+        const query = {
+            text: 'SELECT * FROM Mesin WHERE id_pabrik = $1 AND id_mesin = $2',
+            values: [id_pabrik, id_mesin],
+        };
+
+        const result = await this._pool.query(query);
+
+        return result.rows[0];
     }
 
     async getMesinByName(id_pabrik, nama) {

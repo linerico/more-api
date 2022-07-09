@@ -9,6 +9,7 @@ class PabrikHandler {
 
         this.postPabrikHandler = this.postPabrikHandler.bind(this);
         this.getAllPabrikHandler = this.getAllPabrikHandler.bind(this);
+        this.getPabrikByIdHandler = this.getPabrikByIdHandler.bind(this);
         this.getPabrikByNameHandler = this.getPabrikByNameHandler.bind(this);
         this.putPabrikHandler = this.putPabrikHandler.bind(this);
         this.deletePabrikHandler = this.deletePabrikHandler.bind(this);
@@ -66,6 +67,39 @@ class PabrikHandler {
         try {
             const { id: credentialId } = request.auth.credentials;
             const pabrik = await this._service.getAllPabrik(credentialId);
+            const response = h.response({
+                status: 'OK',
+                data: {
+                    pabrik,
+                },
+            });
+            return response;
+        } catch (error) {
+            if (error instanceof ClientError) {
+                const response = h.response({
+                    status: 'fail',
+                    message: error.message,
+                });
+                response.code(error.statusCode);
+                return response;
+            }
+
+            // Server ERROR!
+            const response = h.response({
+                status: 'error',
+                message: 'Maaf, terjadi kegagalan pada server kami.',
+            });
+            response.code(500);
+            console.error(error);
+            return response;
+        }
+    }
+
+    async getPabrikByIdHandler(request, h) {
+        try {
+            const { id: credentialId } = request.auth.credentials;
+            const { id } = request.params;
+            const pabrik = await this._service.getPabrikById(credentialId, id);
             const response = h.response({
                 status: 'OK',
                 data: {

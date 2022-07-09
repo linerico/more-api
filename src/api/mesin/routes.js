@@ -25,6 +25,14 @@ const routes = (handler) => [
     },
     {
         method: 'GET',
+        path: '/pabrik/{id}/mesin/id/{idMesin}',
+        handler: handler.getMesinByIdHandler,
+        options: {
+            auth: 'moreapp_jwt',
+        },
+    },
+    {
+        method: 'GET',
         path: '/pabrik/{id}/mesin/{filter}',
         handler: handler.getMesinByNameHandler,
         options: {
