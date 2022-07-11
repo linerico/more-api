@@ -204,21 +204,32 @@ class UsersService {
             newUser.nama_pengguna = nama_pengguna;
         }
 
-        // cek perubahan password
-        const match = await bcrypt.compare(password, oldUser.password);
-        if (!match) {
-            const hashedPassword = await bcrypt.hash(password, 10);
-            newUser.password = hashedPassword;
-        }
-
         // cek perubahan no_telepon
         if (oldUser.no_telepon !== no_telepon) {
             newUser.no_telepon = no_telepon;
         }
-        const query = {
-            text: 'UPDATE pengguna SET nama_pengguna = $1, password = $2, no_telepon =$3 WHERE id_pengguna = $4 RETURNING id_pengguna',
-            values: [newUser.nama_pengguna, newUser.password, newUser.no_telepon, userId],
-        };
+
+        let query;
+        if (password !== '') {
+            // cek perubahan password
+            const match = await bcrypt.compare(password, oldUser.password);
+            if (!match) {
+                const hashedPassword = await bcrypt.hash(password, 10);
+                newUser.password = hashedPassword;
+            }
+
+            query = {
+                text: 'UPDATE pengguna SET nama_pengguna = $1, password = $2, no_telepon =$3 WHERE id_pengguna = $4 RETURNING id_pengguna',
+                values: [newUser.nama_pengguna, newUser.password, newUser.no_telepon, userId],
+            };
+        } else {
+            query = {
+                text: 'UPDATE pengguna SET nama_pengguna = $1, no_telepon =$2 WHERE id_pengguna = $3 RETURNING id_pengguna',
+                values: [newUser.nama_pengguna, newUser.no_telepon, userId],
+            };
+        }
+        console.log(query);
+
         const resultNewUser = await this._pool.query(query);
         if (!resultNewUser.rows.length) {
             throw new InvariantError('User gagal diperbarui');

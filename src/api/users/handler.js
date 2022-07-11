@@ -162,7 +162,7 @@ class UserHandler {
 
     async putUserByIdHandler(request, h) {
         try {
-            this._validator.validatorEditUserPayload(request.payload);
+            // this._validator.validatorEditUserPayload(request.payload);
             const { id: credentialId } = request.auth.credentials;
             const { nama_pengguna, password, no_telepon } = request.payload;
             const userId = await this._service.editUser(credentialId, { nama_pengguna, password, no_telepon });

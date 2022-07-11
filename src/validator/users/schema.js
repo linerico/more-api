@@ -14,7 +14,7 @@ const KodeVerifikasiPayload = Joi.object({
 
 const EditUserPayloadSchema = Joi.object({
     nama_pengguna: Joi.string().required(),
-    password: Joi.string().required(),
+    password: Joi.string(),
     no_telepon: Joi.string().required(),
 });
 
