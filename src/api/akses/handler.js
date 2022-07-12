@@ -80,9 +80,11 @@ class AksesHandler {
 
     async deleteAksesHandler(request, h) {
         try {
-            this._validator.validateDeleteAksesPayload(request.payload);
+            console.log(request.payload);
+            // this._validator.validateDeleteAksesPayload(request.payload);
             const { id_pabrik, email } = request.payload;
             const { id: credentialId } = request.auth.credentials;
+            console.log(id_pabrik, email);
             await this._service.deleteAkses(id_pabrik, credentialId, email);
             const response = h.response({
                 status: 'success',

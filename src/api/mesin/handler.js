@@ -27,6 +27,7 @@ class MesinHandler {
     async postMesinHandler(request, h) {
         try {
             const { nama_mesin, tipe_mesin, merek_mesin, gambar_mesin } = request.payload;
+            console.log(request.payload.gambar_mesin);
             this._validator.validateMesinPayload({ nama_mesin, tipe_mesin, merek_mesin });
             this._validator.validateMesinImgHeaders(gambar_mesin.hapi.headers);
 
