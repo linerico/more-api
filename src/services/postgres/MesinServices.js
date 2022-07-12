@@ -181,14 +181,14 @@ class MesinService {
 
     async getLaporan(id_mesin, nama, start, stop) {
         const query = {
-            text: `SELECT timestamp, $1 FROM laporan_${(id_mesin.replace(/-/g, '_').toLowerCase())} WHERE timestamp >= $2 AND timestamp <= $3`,
-            values: [nama, start, stop],
+            text: `SELECT * FROM laporan_${(id_mesin.replace(/-/g, '_').toLowerCase())} WHERE timestamp >= $1 AND timestamp <= $2`,
+            values: [start, stop],
         };
         console.log(query);
 
         const result = await this._pool.query(query);
 
-        if (result.rows.length) {
+        if (!result.rows.length) {
             throw new InvariantError('data yang anda cari tidak ditemukan');
         }
 

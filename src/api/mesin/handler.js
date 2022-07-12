@@ -376,6 +376,7 @@ class MesinHandler {
 
     async getLaporanMesinHandler(request, h) {
         try {
+            // console.log(request.payload);
             const { id: id_pabrik, idMesin: id_mesin } = request.params;
             const { nama, start, stop } = request.payload;
             const { id: credentialId } = request.auth.credentials;
