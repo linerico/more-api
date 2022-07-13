@@ -427,10 +427,11 @@ class MesinHandler {
             const filename = await this._storageServiceDokumen.writeFile(dokumen, dokumen.hapi, '/mesin/doc');
             // const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/mesin/dokumen/${filename}`;
             console.log(gantiNama, nama);
+            // console.log(dokumen.hapi.filename);
             if (gantiNama == 1) {
                 await this._service.addDokumen(id_mesin, nama, filename);
             } else {
-                await this._service.addDokumen(id_mesin, filename, filename);
+                await this._service.addDokumen(id_mesin, dokumen.hapi.filename, filename);
             }
             const response = h.response({
                 status: 'success',
