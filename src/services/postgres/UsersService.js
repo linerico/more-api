@@ -48,7 +48,7 @@ class UsersService {
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
         const queryReset = {
-            text: 'UPDATE pengguna SET password = $1 WHERE id_pengguna = $2 RETURNING id_pengguna',
+            text: 'UPDATE pengguna SET password = $1 WHERE id_pengguna = $4 RETURNING id_pengguna',
             values: [hashedPassword, idPengguna],
         };
         const resultReset = await this._pool.query(queryReset);
