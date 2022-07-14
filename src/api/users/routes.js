@@ -22,6 +22,11 @@ const routes = (handler) => [
         handler: handler.postVerifikasiHandler,
     },
     {
+        method: 'POST',
+        path: '/users/forget',
+        handler: handler.postForgetPasswordHandler,
+    },
+    {
         method: 'GET',
         path: '/users',
         handler: handler.getUserByIdHandler,

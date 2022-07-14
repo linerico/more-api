@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const ClientError = require('../../exceptions/ClientError');
 
 class UserHandler {
@@ -13,6 +14,7 @@ class UserHandler {
         this.getUserByIdHandler = this.getUserByIdHandler.bind(this);
         this.putUserByIdHandler = this.putUserByIdHandler.bind(this);
         this.putUserProfilImageHandler = this.putUserProfilImageHandler.bind(this);
+        this.postForgetPasswordHandler = this.postForgetPasswordHandler.bind(this);
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -38,6 +40,40 @@ class UserHandler {
                 },
             });
             response.code(201);
+            return response;
+        } catch (error) {
+            if (error instanceof ClientError) {
+                const response = h.response({
+                    status: 'fail',
+                    message: error.message,
+                });
+                response.code(error.statusCode);
+                return response;
+            }
+
+            // Server ERROR!
+            const response = h.response({
+                status: 'error',
+                message: 'Maaf, terjadi kegagalan pada server kami.',
+            });
+            response.code(500);
+            console.error(error);
+            return response;
+        }
+    }
+
+    async postForgetPasswordHandler(request, h) {
+        try {
+            const { email, no_telepon } = request.payload;
+            const newPassword = await this._service.resetPassword(email, no_telepon);
+
+            await this._mailSender.sendEmailResetPassword(email, newPassword);
+
+            const response = h.response({
+                status: 'success',
+                message: 'Password berhasil di reset',
+            });
+            response.code(200);
             return response;
         } catch (error) {
             if (error instanceof ClientError) {

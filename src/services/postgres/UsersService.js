@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable camelcase */
 const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
@@ -30,6 +31,31 @@ class UsersService {
             throw new InvariantError('User Gagal ditambahkan');
         }
         return result.rows[0].id_pengguna;
+    }
+
+    async resetPassword(email, no_telepon) {
+        const query = {
+            text: 'SELECT * FROM pengguna WHERE email = $1 AND no_telepon = $2',
+            values: [email, no_telepon],
+        };
+
+        const result = await this._pool.query(query);
+        if (result.rows.length == 0) {
+            throw new InvariantError('Email dan No. Telepon yang anda masukan tidak valid');
+        }
+        const idPengguna = result.rows[0].id_pengguna;
+        const newPassword = `${nanoid(8)}`;
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        const queryReset = {
+            text: 'UPDATE pengguna SET password = $1 WHERE id_pengguna = $2 RETURNING id_pengguna',
+            values: [hashedPassword, idPengguna],
+        };
+        const resultReset = await this._pool.query(queryReset);
+        if (!resultReset.rows.length) {
+            throw new InvariantError('Gagal mengreset password');
+        }
+        return newPassword;
     }
 
     async verifyNewEmail(email) {

@@ -24,6 +24,16 @@ class MailSender {
 
         return this._transporter.sendMail(message);
     }
+
+    sendEmailResetPassword(targetEmail, newPassword) {
+        const message = {
+            from: 'Monitoring and Report - MoRe',
+            to: targetEmail,
+            subject: 'Reset Password',
+            text: `Password Baru : ${newPassword}`,
+        };
+        return this._transporter.sendMail(message);
+    }
 }
 
 module.exports = MailSender;
