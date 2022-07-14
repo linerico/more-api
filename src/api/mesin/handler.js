@@ -184,15 +184,18 @@ class MesinHandler {
         try {
             const { nama_mesin, tipe_mesin, merek_mesin, gambar_mesin } = request.payload;
             this._validator.validateMesinPayload({ nama_mesin, tipe_mesin, merek_mesin });
-            this._validator.validateMesinImgHeaders(gambar_mesin.hapi.headers);
+            // this._validator.validateMesinImgHeaders(gambar_mesin.hapi.headers);
 
             const { id: id_pabrik, idMesin: id_mesin } = request.params;
             const { id: credentialId } = request.auth.credentials;
 
             await this._aksesService.verifyAksesPemilikAdminPabrik(credentialId, id_pabrik);
             // await this._service.verifyNamaMesin(id_pabrik, nama_mesin);
-
-            const filename = await this._storageService.writeFile(gambar_mesin, gambar_mesin.hapi, '/mesin/img');
+            let filename;
+            if (gambar_mesin != undefined) {
+                filename = await this._storageService.writeFile(gambar_mesin, gambar_mesin.hapi, '/mesin/img');
+            }
+            // const filename = await this._storageService.writeFile(gambar_mesin, gambar_mesin.hapi, '/mesin/img');
             // const fileLocation = `http://${process.env.HOST}:${process.env.PORT}/mesin/images/${filename}`;
 
             await this._service.editMesin(id_pabrik, id_mesin, { nama_mesin, tipe_mesin, merek_mesin, gambar_mesin: filename });

@@ -72,16 +72,30 @@ class MesinService {
     }
 
     async editMesin(id_pabrik, id_mesin, { nama_mesin, tipe_mesin, merek_mesin, gambar_mesin }) {
-        const query = {
-            text: `UPDATE MESIN SET
-            nama_mesin = $1,
-            tipe_mesin = $2,
-            merek_mesin = $3,
-            gambar_mesin = $4
-            WHERE id_mesin = $5
-            RETURNING id_mesin`,
-            values: [nama_mesin, tipe_mesin, merek_mesin, gambar_mesin, id_mesin],
-        };
+        let query;
+        if (gambar_mesin === undefined) {
+            query = {
+                text: `UPDATE MESIN SET
+                nama_mesin = $1,
+                tipe_mesin = $2,
+                merek_mesin = $3
+                WHERE id_mesin = $4
+                RETURNING id_mesin`,
+                values: [nama_mesin, tipe_mesin, merek_mesin, id_mesin],
+            };
+        } else {
+            query = {
+                text: `UPDATE MESIN SET
+                nama_mesin = $1,
+                tipe_mesin = $2,
+                merek_mesin = $3,
+                gambar_mesin = $4
+                WHERE id_mesin = $5
+                RETURNING id_mesin`,
+                values: [nama_mesin, tipe_mesin, merek_mesin, gambar_mesin, id_mesin],
+            };
+        }
+        console.log(query);
         const result = await this._pool.query(query);
 
         if (!result.rows.length) {

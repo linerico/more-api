@@ -83,17 +83,32 @@ class PabrikService {
 
     async editPabrik(userId, id_pabrik, { nama_pabrik, alamat_pabrik, kab_kota_pabrik, provinsi_pabrik, gambar_pabrik, peta_pabrik }) {
         await this._aksesService.verifyAksesPemilikPabrik(userId, id_pabrik);
-        const query = {
-            text: `UPDATE pabrik SET
-            nama_pabrik = $1,
-            alamat_pabrik = $2,
-            kab_kota_pabrik = $3,
-            provinsi_pabrik = $4,
-            gambar_pabrik = $5,
-            peta_pabrik = $6
-            WHERE id_pabrik = $7 RETURNING id_pabrik`,
-            values: [nama_pabrik, alamat_pabrik, kab_kota_pabrik, provinsi_pabrik, gambar_pabrik, peta_pabrik, id_pabrik],
-        };
+        console.log(gambar_pabrik);
+        let query;
+        if (gambar_pabrik === undefined) {
+            query = {
+                text: `UPDATE pabrik SET
+                nama_pabrik = $1,
+                alamat_pabrik = $2,
+                kab_kota_pabrik = $3,
+                provinsi_pabrik = $4,
+                peta_pabrik = $5
+                WHERE id_pabrik = $6 RETURNING id_pabrik`,
+                values: [nama_pabrik, alamat_pabrik, kab_kota_pabrik, provinsi_pabrik, peta_pabrik, id_pabrik],
+            };
+        } else {
+            query = {
+                text: `UPDATE pabrik SET
+                nama_pabrik = $1,
+                alamat_pabrik = $2,
+                kab_kota_pabrik = $3,
+                provinsi_pabrik = $4,
+                gambar_pabrik = $5,
+                peta_pabrik = $6
+                WHERE id_pabrik = $7 RETURNING id_pabrik`,
+                values: [nama_pabrik, alamat_pabrik, kab_kota_pabrik, provinsi_pabrik, gambar_pabrik, peta_pabrik, id_pabrik],
+            };
+        }
 
         const result = await this._pool.query(query);
 
