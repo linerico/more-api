@@ -148,7 +148,7 @@ class MesinService {
                 ke = i;
             }
         }
-        console.log(result.rows[0]);
+        // console.log(result.rows[0]);
 
         if (ke === -1) {
             throw new InvariantError('namaMonitor yang ada masukan tidak valid');
@@ -158,6 +158,13 @@ class MesinService {
         varTemp.enableAlarm = enable;
         varTemp.min = min;
         varTemp.max = max;
+        // tidak alarm
+        if ((varTemp.min < varTemp.value || varTemp.max > varTemp.value)) {
+            varTemp.alarm = false;
+        }
+        if ((varTemp.min > varTemp.value) || varTemp.max < varTemp.value) {
+            varTemp.alarm = true;
+        }
 
         variabel[ke] = varTemp;
 
