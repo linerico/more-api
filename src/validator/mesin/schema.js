@@ -13,8 +13,8 @@ const MesinImgHeadersSchema = Joi.object({
 const SettingPayloadSchema = Joi.object({
     nama: Joi.string().required(),
     enable: Joi.boolean().required(),
-    min: Joi.number().min(0).required(),
-    max: Joi.number().min(0).required(),
+    min: Joi.number().required(),
+    max: Joi.number().required(),
 });
 
 module.exports = { MesinPayloadSchema, MesinImgHeadersSchema, SettingPayloadSchema };

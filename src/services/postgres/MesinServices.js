@@ -201,8 +201,9 @@ class MesinService {
     }
 
     async getLaporan(id_mesin, nama, start, stop) {
+        await this.getStatusOnline(id_mesin);
         const query = {
-            text: `SELECT * FROM laporan_${(id_mesin.replace(/-/g, '_').toLowerCase())} WHERE timestamp >= $1 AND timestamp <= $2`,
+            text: `SELECT * FROM laporan_${(id_mesin.replace(/-/g, '_').toLowerCase())} WHERE timestamp >= $1 AND timestamp <= $2 ORDER BY timestamp DESC`,
             values: [start, stop],
         };
         console.log(query);
@@ -240,6 +241,21 @@ class MesinService {
         const result = await this._pool.query(query);
 
         return result.rows;
+    }
+
+    async getStatusOnline(id_mesin) {
+        const query = {
+            text: 'SELECT update_terakhir FROM monitor WHERE id_mesin = $1',
+            values: [id_mesin],
+        };
+        const result = await this._pool.query(query);
+        const timestamp = new Date().getTime();
+        let online = false;
+        if (result.rows[0].update_terakhir > timestamp - 300000) {
+            online = true;
+        }
+        console.log("status Online : ", online);
+        console.log(result.rows[0].update_terakhir, timestamp);
     }
 
     async deleteDokumen(id_dokumen) {
