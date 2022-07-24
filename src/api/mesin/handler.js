@@ -15,6 +15,7 @@ class MesinHandler {
         this.getMesinByNameHandler = this.getMesinByNameHandler.bind(this);
         this.putMesinHandler = this.putMesinHandler.bind(this);
         this.deleteMesinHandler = this.deleteMesinHandler.bind(this);
+        this.getStatusMesinHandler = this.getStatusMesinHandler.bind(this);
         this.getMesinMonitorHandler = this.getMesinMonitorHandler.bind(this);
         this.putSettingAlarmHandler = this.putSettingAlarmHandler.bind(this);
         this.getMesinMonitorNameHandler = this.getMesinMonitorNameHandler.bind(this);
@@ -241,6 +242,43 @@ class MesinHandler {
                 message: 'Mesin berhasil dihapus',
             });
             response.code(200);
+            return response;
+        } catch (error) {
+            if (error instanceof ClientError) {
+                const response = h.response({
+                    status: 'fail',
+                    message: error.message,
+                });
+                response.code(error.statusCode);
+                return response;
+            }
+
+            // Server ERROR!
+            const response = h.response({
+                status: 'error',
+                message: 'Maaf, terjadi kegagalan pada server kami.',
+            });
+            response.code(500);
+            console.error(error);
+            return response;
+        }
+    }
+
+    async getStatusMesinHandler(request, h) {
+        try {
+            const { id: id_pabrik, idMesin: id_mesin } = request.params;
+            const { id: credentialId } = request.auth.credentials;
+
+            await this._aksesService.cekStatus(credentialId, id_pabrik);
+
+            const status = await this._service.getStatusOnline(id_mesin);
+            console.log(status);
+            const response = h.response({
+                status: 'success',
+                data: {
+                    online: status,
+                },
+            });
             return response;
         } catch (error) {
             if (error instanceof ClientError) {

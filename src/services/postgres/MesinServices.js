@@ -201,19 +201,19 @@ class MesinService {
     }
 
     async getLaporan(id_mesin, nama, start, stop) {
-        await this.getStatusOnline(id_mesin);
+        // await this.getStatusOnline(id_mesin);
         const query = {
             text: `SELECT * FROM laporan_${(id_mesin.replace(/-/g, '_').toLowerCase())} WHERE timestamp >= $1 AND timestamp <= $2 ORDER BY timestamp DESC`,
             values: [start, stop],
         };
-        console.log(query);
+        // console.log(query);
 
         const result = await this._pool.query(query);
 
         if (!result.rows.length) {
             throw new InvariantError('data yang anda cari tidak ditemukan');
         }
-
+        // console.log(result.rows);
         return result.rows;
     }
 
@@ -251,11 +251,12 @@ class MesinService {
         const result = await this._pool.query(query);
         const timestamp = new Date().getTime();
         let online = false;
-        if (result.rows[0].update_terakhir > timestamp - 300000) {
+        if (result.rows[0].update_terakhir > timestamp - 3000) {
             online = true;
         }
         console.log("status Online : ", online);
         console.log(result.rows[0].update_terakhir, timestamp);
+        return online;
     }
 
     async deleteDokumen(id_dokumen) {
