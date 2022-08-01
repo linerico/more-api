@@ -43,7 +43,7 @@ class NotifikasiService {
 
     async getNotifikasi(id_pengguna) {
         const query = {
-            text: 'select notifikasi.*, pabrik.nama_pabrik, mesin.nama_mesin from notifikasi left join pabrik on notifikasi.id_pabrik = pabrik.id_pabrik left join mesin on notifikasi.id_mesin = mesin.id_mesin where notifikasi.id_pengguna =$1',
+            text: 'select notifikasi.*, pabrik.nama_pabrik, mesin.nama_mesin, mesin.gambar_mesin from notifikasi left join pabrik on notifikasi.id_pabrik = pabrik.id_pabrik left join mesin on notifikasi.id_mesin = mesin.id_mesin where notifikasi.id_pengguna =$1',
             values: [id_pengguna],
         };
 
