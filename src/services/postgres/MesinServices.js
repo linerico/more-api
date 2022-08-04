@@ -307,7 +307,7 @@ class MesinService {
         const result = await this._pool.query(query);
         const timestamp = new Date().getTime();
         let online = false;
-        if (result.rows[0].update_terakhir > timestamp - 3000) {
+        if (result.rows[0].update_terakhir > timestamp - 6000) {
             online = true;
         }
         console.log("status Online : ", online);
