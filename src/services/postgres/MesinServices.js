@@ -312,7 +312,12 @@ class MesinService {
         }
         console.log("status Online : ", online);
         console.log(result.rows[0].update_terakhir, timestamp);
-        return online;
+        const res = {
+            online,
+            last: result.rows[0].update_terakhir,
+            now: timestamp,
+        };
+        return res;
     }
 
     async deleteDokumen(id_dokumen) {
