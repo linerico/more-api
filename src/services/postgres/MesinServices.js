@@ -307,17 +307,17 @@ class MesinService {
         const result = await this._pool.query(query);
         const timestamp = new Date().getTime();
         let online = false;
-        if (result.rows[0].update_terakhir > timestamp - 6000) {
+        if (result.rows[0].update_terakhir > timestamp - 10000) {
             online = true;
         }
         console.log("status Online : ", online);
         console.log(result.rows[0].update_terakhir, timestamp);
-        const res = {
-            online,
-            last: result.rows[0].update_terakhir,
-            now: timestamp,
-        };
-        return res;
+        // const res = {
+        //     online,
+        //     last: result.rows[0].update_terakhir,
+        //     now: timestamp,
+        // };
+        return online;
     }
 
     async deleteDokumen(id_dokumen) {
