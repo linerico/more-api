@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 /* eslint-disable eqeqeq */
 /* eslint-disable prefer-const */
 /* eslint-disable no-const-assign */
@@ -221,10 +222,19 @@ class MesinService {
     }
 
     async getLaporanbyVar(id_mesin, nama, start, stop) {
+        let startDate = `${start}`;
+        startDate = startDate.split("-");
+        let newStartDate = new Date(startDate[2], startDate[1] - 1, startDate[0]);
+
+        let stopDate = `${stop}`;
+        stopDate = stopDate.split("-");
+        let newStopDate = new Date(stopDate[2], stopDate[1], stopDate[0]);
+        console.log(newStartDate.getTime(), newStopDate.getTime());
+
         // await this.getStatusOnline(id_mesin);
         const query = {
             text: `SELECT * FROM laporan_${(id_mesin.replace(/-/g, '_').toLowerCase())} WHERE timestamp >= $1 AND timestamp <= $2 ORDER BY timestamp DESC`,
-            values: [start, stop],
+            values: [newStartDate.getTime(), newStopDate.getTime()],
         };
         // console.log(query);
 
@@ -234,7 +244,7 @@ class MesinService {
             throw new InvariantError('data yang anda cari tidak ditemukan');
         }
         let laporan = [];
-
+        let myNo = 1;
         for (let i = 0; i < result.rows.length; i++) {
             let temp = result.rows[i];
             // console.log(temp.laporan);
@@ -243,12 +253,15 @@ class MesinService {
                 if (tempj.nama == nama && tempj.value != undefined) {
                     // console.log(tempj);
                     // laporan.push(tempj);
+                    let waktu = new Date(parseInt(temp.timestamp));
+                    const myFormat = `${waktu.getDate()}-${waktu.getMonth() + 1}-${waktu.getFullYear()}  ${waktu.getHours()}:${waktu.getMinutes()}:${waktu.getSeconds()}`;
                     const myla = {
+                        nomor: `${myNo}`,
                         nama: tempj.nama,
-                        value: tempj.value,
-                        satuan: tempj.satuan,
-                        timestamp: temp.timestamp,
+                        value: `${tempj.value} ${tempj.satuan}`,
+                        timestamp: myFormat,
                     };
+                    myNo++;
                     laporan.push(myla);
                 }
             }
