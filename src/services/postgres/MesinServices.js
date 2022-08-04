@@ -1,3 +1,5 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable prefer-const */
 /* eslint-disable no-const-assign */
 /* eslint-disable quotes */
 /* eslint-disable space-unary-ops */
@@ -213,8 +215,49 @@ class MesinService {
         if (!result.rows.length) {
             throw new InvariantError('data yang anda cari tidak ditemukan');
         }
+        // await this.getLaporanbyVar(id_mesin, nama, start, stop);
         // console.log(result.rows);
         return result.rows;
+    }
+
+    async getLaporanbyVar(id_mesin, nama, start, stop) {
+        // await this.getStatusOnline(id_mesin);
+        const query = {
+            text: `SELECT * FROM laporan_${(id_mesin.replace(/-/g, '_').toLowerCase())} WHERE timestamp >= $1 AND timestamp <= $2 ORDER BY timestamp DESC`,
+            values: [start, stop],
+        };
+        // console.log(query);
+
+        const result = await this._pool.query(query);
+
+        if (!result.rows.length) {
+            throw new InvariantError('data yang anda cari tidak ditemukan');
+        }
+        let laporan = [];
+
+        for (let i = 0; i < result.rows.length; i++) {
+            let temp = result.rows[i];
+            // console.log(temp.laporan);
+            for (let j = 0; j < temp.laporan.length; j++) {
+                let tempj = temp.laporan[j];
+                if (tempj.nama == nama && tempj.value != undefined) {
+                    // console.log(tempj);
+                    // laporan.push(tempj);
+                    const myla = {
+                        nama: tempj.nama,
+                        value: tempj.value,
+                        satuan: tempj.satuan,
+                        timestamp: temp.timestamp,
+                    };
+                    laporan.push(myla);
+                }
+            }
+        }
+        // console.log(result.rows);
+        // console.log(laporan);
+        // console.log(result.rows);
+        // return result.rows;
+        return laporan;
     }
 
     async addDokumen(id_mesin, nama, dokumen) {
