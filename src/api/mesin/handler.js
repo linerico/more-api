@@ -21,6 +21,7 @@ class MesinHandler {
         this.getMesinMonitorNameHandler = this.getMesinMonitorNameHandler.bind(this);
         this.getLaporanMesinHandler = this.getLaporanMesinHandler.bind(this);
         this.getLaporanByNameHandler = this.getLaporanByNameHandler.bind(this);
+        this.getLaporanChartHandler = this.getLaporanChartHandler.bind(this);
         this.postDokumenHandler = this.postDokumenHandler.bind(this);
         this.getDokumenHandler = this.getDokumenHandler.bind(this);
         this.deleteDokumenHandler = this.deleteDokumenHandler.bind(this);
@@ -465,6 +466,45 @@ class MesinHandler {
             await this._aksesService.cekStatus(credentialId, id_pabrik);
 
             const laporan = await this._service.getLaporanbyVar(id_mesin, nama, start, stop);
+
+            const response = h.response({
+                status: 'success',
+                data: {
+                    laporan,
+                },
+            });
+            return response;
+        } catch (error) {
+            if (error instanceof ClientError) {
+                const response = h.response({
+                    status: 'fail',
+                    message: error.message,
+                });
+                response.code(error.statusCode);
+                return response;
+            }
+
+            // Server ERROR!
+            const response = h.response({
+                status: 'error',
+                message: 'Maaf, terjadi kegagalan pada server kami.',
+            });
+            response.code(500);
+            console.error(error);
+            return response;
+        }
+    }
+
+    async getLaporanChartHandler(request, h) {
+        try {
+            // console.log(request.payload);
+            const { id: id_pabrik, idMesin: id_mesin } = request.params;
+            const { nama, start, stop } = request.payload;
+            const { id: credentialId } = request.auth.credentials;
+
+            await this._aksesService.cekStatus(credentialId, id_pabrik);
+
+            const laporan = await this._service.getLaporanChart(id_mesin, nama, start, stop);
 
             const response = h.response({
                 status: 'success',

@@ -218,6 +218,8 @@ class MesinService {
         }
         // await this.getLaporanbyVar(id_mesin, nama, start, stop);
         // console.log(result.rows);
+        console.log(result.rows);
+        this.getLaporanChart(id_mesin, nama, start, stop);
         return result.rows;
     }
 
@@ -271,6 +273,38 @@ class MesinService {
         // console.log(result.rows);
         // return result.rows;
         return laporan;
+    }
+
+    async getLaporanChart(id_mesin, nama, start, stop) {
+        const query = {
+            text: `SELECT * FROM laporan_${(id_mesin.replace(/-/g, '_').toLowerCase())} WHERE timestamp >= $1 AND timestamp <= $2 ORDER BY timestamp DESC`,
+            values: [start, stop],
+        };
+        const result = await this._pool.query(query);
+
+        if (!result.rows.length) {
+            throw new InvariantError('data yang anda cari tidak ditemukan');
+        }
+        let myLaporan = [];
+        for (let i = 0; i < result.rows.length; i++) {
+            let temp = result.rows[i];
+            for (let j = 0; j < temp.laporan.length; j++) {
+                let tempj = temp.laporan[j];
+                if (tempj.nama == nama && tempj.value != undefined) {
+                    const myla = {
+                        x: temp.timestamp * 1,
+                        y: tempj.value,
+                    };
+                    myLaporan.push(myla);
+                }
+            }
+        }
+        const finalLaporan = {
+            name: nama,
+            data: myLaporan,
+        };
+        console.log(finalLaporan);
+        return finalLaporan;
     }
 
     async addDokumen(id_mesin, nama, dokumen) {
