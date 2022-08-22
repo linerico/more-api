@@ -321,7 +321,7 @@ class MesinService {
 
         // await this.getStatusOnline(id_mesin);
         const query = {
-            text: `SELECT * FROM laporan_${(id_mesin.replace(/-/g, '_').toLowerCase())} WHERE timestamp >= $1 AND timestamp <= $2 ORDER BY timestamp DESC`,
+            text: `SELECT * FROM laporan_${(id_mesin.replace(/-/g, '_').toLowerCase())} WHERE timestamp >= $1 AND timestamp <= $2 ORDER BY timestamp ASC`,
             values: [newStartDate.getTime(), newStopDate.getTime()],
         };
         // console.log(query);
