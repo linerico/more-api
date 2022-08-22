@@ -25,6 +25,7 @@ class MesinHandler {
         this.postDokumenHandler = this.postDokumenHandler.bind(this);
         this.getDokumenHandler = this.getDokumenHandler.bind(this);
         this.deleteDokumenHandler = this.deleteDokumenHandler.bind(this);
+        this.getLaporanChartAndroidHandler = this.getLaporanChartAndroidHandler.bind(this);
     }
 
     async postMesinHandler(request, h) {
@@ -505,6 +506,45 @@ class MesinHandler {
             await this._aksesService.cekStatus(credentialId, id_pabrik);
 
             const laporan = await this._service.getLaporanChart(id_mesin, nama, start, stop);
+
+            const response = h.response({
+                status: 'success',
+                data: {
+                    laporan,
+                },
+            });
+            return response;
+        } catch (error) {
+            if (error instanceof ClientError) {
+                const response = h.response({
+                    status: 'fail',
+                    message: error.message,
+                });
+                response.code(error.statusCode);
+                return response;
+            }
+
+            // Server ERROR!
+            const response = h.response({
+                status: 'error',
+                message: 'Maaf, terjadi kegagalan pada server kami.',
+            });
+            response.code(500);
+            console.error(error);
+            return response;
+        }
+    }
+
+    async getLaporanChartAndroidHandler(request, h) {
+        try {
+            // console.log(request.payload);
+            const { id: id_pabrik, idMesin: id_mesin } = request.params;
+            const { nama, start, stop } = request.payload;
+            const { id: credentialId } = request.auth.credentials;
+
+            await this._aksesService.cekStatus(credentialId, id_pabrik);
+
+            const laporan = await this._service.getLaporanChartAndroid(id_mesin, nama, start, stop);
 
             const response = h.response({
                 status: 'success',

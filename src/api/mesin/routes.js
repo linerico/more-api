@@ -128,6 +128,14 @@ const routes = (handler) => [
     },
     {
         method: 'POST',
+        path: '/pabrik/{id}/mesin/{idMesin}/laporanchartandroid',
+        handler: handler.getLaporanChartAndroidHandler,
+        options: {
+            auth: 'moreapp_jwt',
+        },
+    },
+    {
+        method: 'POST',
         path: '/pabrik/{id}/mesin/{idMesin}/dokumen',
         handler: handler.postDokumenHandler,
         options: {

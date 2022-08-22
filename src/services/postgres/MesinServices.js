@@ -268,6 +268,8 @@ class MesinService {
                 }
             }
         }
+        // this.getLaporanChartAndroid(id_mesin, nama, start, stop);
+
         // console.log(result.rows);
         // console.log(laporan);
         // console.log(result.rows);
@@ -305,6 +307,57 @@ class MesinService {
         };
         console.log(finalLaporan);
         return finalLaporan;
+    }
+
+    async getLaporanChartAndroid(id_mesin, nama, start, stop) {
+        let startDate = `${start}`;
+        startDate = startDate.split("-");
+        let newStartDate = new Date(startDate[2], startDate[1] - 1, startDate[0]);
+
+        let stopDate = `${stop}`;
+        stopDate = stopDate.split("-");
+        let newStopDate = new Date(stopDate[2], stopDate[1], stopDate[0]);
+        console.log(newStartDate.getTime(), newStopDate.getTime());
+
+        // await this.getStatusOnline(id_mesin);
+        const query = {
+            text: `SELECT * FROM laporan_${(id_mesin.replace(/-/g, '_').toLowerCase())} WHERE timestamp >= $1 AND timestamp <= $2 ORDER BY timestamp DESC`,
+            values: [newStartDate.getTime(), newStopDate.getTime()],
+        };
+        // console.log(query);
+
+        const result = await this._pool.query(query);
+
+        if (!result.rows.length) {
+            throw new InvariantError('data yang anda cari tidak ditemukan');
+        }
+        let laporan = [];
+        let myNo = 1;
+        for (let i = 0; i < result.rows.length; i++) {
+            let temp = result.rows[i];
+            // console.log(temp.laporan);
+            for (let j = 0; j < temp.laporan.length; j++) {
+                let tempj = temp.laporan[j];
+                if (tempj.nama == nama && tempj.value != undefined) {
+                    // console.log(tempj);
+                    // laporan.push(tempj);
+                    let waktu = new Date(parseInt(temp.timestamp));
+                    const myFormat = `${waktu.getDate()}-${waktu.getMonth() + 1}-${waktu.getFullYear()}  ${waktu.getHours()}:${waktu.getMinutes()}:${waktu.getSeconds()}`;
+                    const myla = {
+                        nomor: `${myNo}`,
+                        value: parseFloat(tempj.value) * 1.0,
+                        timestamp: myFormat,
+                    };
+                    myNo++;
+                    laporan.push(myla);
+                }
+            }
+        }
+        // console.log(result.rows);
+        // console.log(laporan);
+        // console.log(result.rows);
+        // return result.rows;
+        return laporan;
     }
 
     async addDokumen(id_mesin, nama, dokumen) {
